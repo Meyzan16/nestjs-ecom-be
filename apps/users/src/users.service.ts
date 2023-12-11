@@ -8,6 +8,7 @@ import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from './email/email.service';
 import jwt from '@nestjs/jwt';
+import { TokenSender } from './utils/sentToken';
 
 interface userData {
   name: string;
@@ -95,9 +96,8 @@ export class UsersService {
     return { token, activationCode };
   }
 
-
   //activation code
-  async activateUser(activateDto: ActivationDto, response:Response) {
+  async activateUser(activateDto: ActivationDto, response: Response) {
     const { activationCode, activationToken } = activateDto;
 
     const newUser: { user: userData; activationCode: number } =
@@ -109,38 +109,58 @@ export class UsersService {
       throw new BadRequestException('Invalid activation code');
     }
 
-    const {name,email,password,phone_number} = newUser.user;
+    const { name, email, password, phone_number } = newUser.user;
     const existUser = await this.prisma.user.findUnique({
       where: {
         email,
-      }
+      },
     });
-    
-    if(existUser) {
+
+    if (existUser) {
       throw new BadRequestException('user already exist with this email!');
     }
 
     const user = await this.prisma.user.create({
-      data:{
+      data: {
         name,
         email,
         password,
-        phone_number
-      }
-    })
+        phone_number,
+      },
+    });
 
     return { user, response };
-
   }
 
   //login service
   async Login(loginDto: LoginDto) {
-    const { email, passsword } = loginDto;
-    const user = {
-      email,
-      passsword,
-    };
-    return user;
+    const { email, password } = loginDto;
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (user && (await this.comparePassword(password, user.password))) {
+      const tokenSender = new TokenSender(this.configService, this.jwtservice);
+      return tokenSender.sendToken(user);
+    } else {
+      return {
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        error: {
+          message: 'Invalid email or password',
+        },
+      };
+    }
+  }
+
+  //compare password
+  async comparePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword);
   }
 
   //get all user service

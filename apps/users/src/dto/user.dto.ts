@@ -35,7 +35,7 @@ export class LoginDto {
     @Field()
     @IsNotEmpty({message: 'Password is required'})
     @MinLength(8, { message: 'Password must be at least 8 charachters' })
-    passsword: string;
+    password: string;
 }
 
 @InputType()

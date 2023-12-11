@@ -38,6 +38,12 @@ export class User {
     @Field()
     role: string;
 
+    @Field({nullable:true})
+    address: string ;
+
+    @Field()
+    phone_number: string;
+
     @Field()
     createdAt: string;
 

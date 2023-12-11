@@ -15,3 +15,34 @@
 5. npx prisma init
 6. npx prisma db push // setelah create schema maka push dan create database
 6. npx prisma studio // generate url
+
+
+
+<!-- 
+mutation{
+  register(registerDto: {
+    name:"meyzan",
+    email:"Meyzan1605@gmail.com",
+    password:"12345678",
+    phone_number:"123456"
+  }){
+    activation_token
+  }
+}
+
+mutation{
+  activateUser(
+    activationDto:{
+      activationToken:"",
+      activationCode: 2404
+    }
+  ){
+    user{
+      name
+      email
+      password
+      role
+    }
+  }
+}
+ -->
