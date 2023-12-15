@@ -1,6 +1,8 @@
 <!-- installer -->
 1. nest new //create nest
 2. nest g app // generate folder
+
+<!-- create service -->
 3. nest g module --name // generate module
 4. nest g service --name // generate service
 

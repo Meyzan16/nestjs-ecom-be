@@ -67,11 +67,11 @@ export class UsersService {
     const activation_token = activationToken.token;
 
     await this.emailService.sendMail({
-      email,
       subject: 'Activate your account!',
-      template: './activation-email',
+      email,
       name,
       activationCode,
+      template: './activation-email',
     });
 
     // console.log(activation_token);

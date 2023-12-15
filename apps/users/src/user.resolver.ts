@@ -17,7 +17,8 @@ export class UsersResolver {
     @Args('registerDto') registerDto: RegisterDto,
     @Context() context: { res: Response },
   ): Promise<RegisterResponse> {
-    if (!registerDto.name || !registerDto.email || !registerDto.password) {
+    //memastikan bahwa ada inputan
+    if (!registerDto.name || !registerDto.email || !registerDto.password || !registerDto.phone_number) {
       throw new BadRequestException('Please fill the all fields');
     }
     const { activation_token } = await this.userService.register(registerDto, context.res);
